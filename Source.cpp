@@ -62,9 +62,17 @@ protected:
     int count;
     Bus* next;
     Bus* prev;
-    int count_DEL;
+    int count_DEL; // so bus da xoa
+    int count_CS_have_CASE; // dung trong truong hop tra ve xo bus trong hamf CS va co CASE(1 trong 2 chieu)
+    int count_CS;
+    int count_CE_have_CASE;
+    int count_CE;
+    int count_GS;
+    int count_GE;
 
 public:
+
+    // DUNG TRONG INS
     void add(Bus* Bus_transmit);
     bool check_CODE_TIMEA(Bus* Bus_transmits);                 // kiem tra Bus them vao cos hop le ko cos cung tuyen cung gio xuat ben khong
     bool check_TIMEA_TIMEB_of_DLL_Bus(Bus* Bus_transmit);                //kiem tra time xuat phat cua xe sau cos lown hon time cap ben cua xe truoc ko 
@@ -75,9 +83,14 @@ public:
     void delete_Bus_CODE_TIMEA_TIMEB(string CODE, int TIMEA, int TIMEB);  // xoa Bus cos du TIMEA , TIMEB 
     void delete_Bus_CODE_TIMEA(string CODE, int TIMEA); // xoa BUS co TIME A;
     void delete_Bus_CODE(string CODE); //xoa BUS ma khong co TIMEA , TIMEB
-
-
     void delete_a_Bus_of_List_Bus(Bus* Bus_transmit);// dung de xoa mot bus trong danh sach , duoc goi lai khi muon xoa mot Bus nao do thoa yeu cau 
+    // dung trong CS
+    void number_Bus_CS_TIME_CASE(string CODE ,int start_TIME, int CASE);  //tra ve so Bus da bat dau di nhung chua den ben taij TIME voi CASE xac dinh
+    void number_Bus_CS_TIME(string CODE ,int start_TIME); // tra ve so Bus da bat dau di nhung chua den ben taij TIME ca 2 chieu
+
+    // dung trong CE
+    void number_Bus_CE_TIME_CASE(string CODE, int end_TIME, int CASE); // tra ve so Bus da ket thuc trong 1 trong 2 truong hop
+    void number_Bus_CE_TIME(string CODE, int end_TIME);  // tra ve so Bus da ket thuc ca 2 chuyen di di ve ve 
 
 
 };
@@ -93,18 +106,18 @@ public:
     bool SQ_Bus(string instruction);
     string INS_Bus(string instruction);
     string DEL_Bus(string instruction);
-    void CS_Bus(string instruction);
+    string CS_Bus(string instruction);
 
-    void CE_Bus(string instruction);
-    void GS_Bus(string instruction);
-    void  GE_Bus(string instruction);
+    string CE_Bus(string instruction);
+    string GS_Bus(string instruction);
+    string GE_Bus(string instruction);
 
 
     bool check_have_CASE_of_Bus(string instruction);
 
 
     bool check_Excution_Statement(string instruction);
-
+    bool check_CODE_Statement(string ex_CODE); // kiem tra CODE co hop le ko  dungf trong CS
     bool check_CODE_LP_Excution_Statement(string codeExcution, string LPExcution);  // kiem tra chuoi code vaf LP co hop le hay khong
     bool check_CASE(string ex_CASE);  // DUNG TRONG INS
     bool check_TIMEA_TIMEB_of_aBus(string TIMEA, string TIMEB); // tra ve true neu no hop le
@@ -209,6 +222,38 @@ bool Double_Link_List_Bus::check_number_Max_of_CODE(Bus* Bus_transmit) {
     else return true;
 }
 
+void Double_Link_List_Bus::number_Bus_CS_TIME_CASE(string CODE ,int start_TIME, int CASE){
+    Bus* Bus_cur = this->head;
+    while (Bus_cur->next != NULL) {
+        if (Bus_cur->TIME_A <= start_TIME && Bus_cur->TIME_B >= start_TIME && Bus_cur->CASE == CASE && Bus_cur->CODE == CODE) { count_CS_have_CASE++; }
+        Bus_cur = Bus_cur->next;
+    }
+}
+
+void Double_Link_List_Bus::number_Bus_CS_TIME(string CODE,int start_TIME) {
+    Bus* Bus_cur = this->head;
+    while (Bus_cur->next != NULL) {
+        if (Bus_cur->TIME_A <= start_TIME && Bus_cur->TIME_B >= start_TIME && Bus_cur->CODE == CODE) count_CS++;
+        Bus_cur = Bus_cur->next;
+    }
+}
+
+void Double_Link_List_Bus::number_Bus_CE_TIME_CASE(string CODE, int end_TIME, int CASE) {
+    Bus* Bus_Cur = this->head;
+    while (Bus_Cur->next != NULL) {
+        if (Bus_Cur->CODE == CODE && Bus_Cur->TIME_B > end_TIME && Bus_Cur->CASE == CASE) count_CE_have_CASE++;
+        Bus_Cur = Bus_Cur->next;
+    }
+}
+void Double_Link_List_Bus::number_Bus_CE_TIME(string CODE, int end_TIME) {
+    Bus* Bus_Cur = this->head;
+    while (Bus_Cur->next != NULL) {
+        if (Bus_Cur->CODE == CODE && Bus_Cur->TIME_B > end_TIME) count_CE++;
+        Bus_Cur = Bus_Cur->next;
+    }
+}
+
+
 
 // kiem tra xem da co bus nao cung tuyen , cung time a khong ?
 // true neu khong co 
@@ -263,8 +308,6 @@ int Double_Link_List_Bus::number_Bus_CODE(Bus* Bus_transmit) {
 //.. con cac truong hop 3space , 6 space ==> da duoc hien thuc trong check_ins.._ex...
 
 bool BusSystem::check_have_CASE_of_Bus(string instruction)
-
-
 {
     int count_space = 0;
     for (unsigned int i = 0; i < instruction.size(); i++) {
@@ -293,6 +336,7 @@ bool BusSystem::check_CASE(string ex_CASE) {
 //chi xet dau space chu xet xem no co hop ly khong 
 // true :: khi khong co space dau va cuoi chuoi  && so space xen giua phai hop ly
 // false :: ... truong hop khac
+// instruction truyen o day la instruction goc
 bool BusSystem::check_Excution_Statement(string instruction) {
 
     string ex_statement = instruction.substr(0, 3);   // execution statement
@@ -356,6 +400,11 @@ bool BusSystem::check_CODE_LP_Excution_Statement(string codeExcution, string LPE
     if (codeExcution.size() <= 5 && LPExcution.size() <= 10) return true;
     else return false;
 }
+//
+bool BusSystem::check_CODE_Statement(string ex_CODE) {
+    if (ex_CODE.size() <= 5) return true;
+    else return false;
+}
 //check xem trong 1 xe bus TIME_B > TIMEA khong ?
 // true : hop le
 // false :: khong hop le
@@ -388,9 +437,15 @@ bool BusSystem::check_String_to_Int(string temp_string) {
 // vi cu phap lenh CS, CE, GS, GE giong nhau 
 // tra ve true neu co CASE 
 //false :.... khong co CASE
-//instruction truyen vao trong Check nay laf instruction da xoa 2 kis tu dau kem dau space ngay sau do
+//instruction truyen vao trong Check nay laf instruction goc da xoa 2 kis tu dau kem dau space ngay sau do
 bool BusSystem::check_CASE_of_CS_CE_GS_GE(string instruction) {
 
+    int count_space = 0;
+    for (int i = 0; i < instruction.size(); i++) {
+        if (instruction[i] == ' ') count_space++;
+    }
+    if (count_space == 2) return true;
+    else if (count_space == 1) return false;
 
 }
 
@@ -423,7 +478,27 @@ string BusSystem::query(string instruction) {
 
 
         }
-
+        if(ex_statement == "DEL"){
+            instruction = instruction.erase(0, 4);
+            return DEL_Bus(instruction);
+        }
+        if(ex_statement == "CS "){
+        
+            instruction = instruction.erase(0, 3);
+            return CS_Bus(instruction);
+        }
+        if (ex_statement == "CE ") {
+            instruction = instruction.erase(0, 3);
+            return CE_Bus(instruction);
+        }
+        if (ex_statement == "GS ") {
+            instruction = instruction.erase(0, 3);
+            return GS_Bus(instruction);
+        }
+        if (ex_statement == "GE ") {
+            instruction = instruction.erase(0, 3);
+            return GE_Bus(instruction);
+        }
 
 
 
@@ -642,7 +717,7 @@ string BusSystem::DEL_Bus(string instruction) {
 
         TIMEB = instruction;
 
-        if (check_String_to_Int(TIMEA) == true && check_String_to_Int(TIMEB)) {
+        if (check_String_to_Int(TIMEA) == true && check_String_to_Int(TIMEB) && check_CODE_Statement(CODE) == true) {
             List_Bus.delete_Bus_CODE_TIMEA_TIMEB(CODE, stoi(TIMEA), stoi(TIMEB));
             return to_string(List_Bus.count_DEL);
         }
@@ -650,6 +725,116 @@ string BusSystem::DEL_Bus(string instruction) {
     }
 
 }
+
+string BusSystem::CS_Bus(string instruction) {
+    string CODE = "";
+    string TIME = "";
+    string CASE = "";
+    if (check_CASE_of_CS_CE_GS_GE(instruction) == true) {
+    
+        int n = 0;
+        while (instruction[n] != ' ') {
+            n++;
+        }
+         CODE = instruction.substr(0, n);
+
+        instruction = instruction.erase(0, n + 1);
+
+        int m = 0;
+        while (instruction[m] != ' ') {
+            m++;
+        }
+        TIME = instruction.substr(0, m);
+
+        instruction = instruction.erase(0, m + 1);
+
+        CASE = instruction;
+
+        if (check_CASE(CASE) == true && check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true) {
+            List_Bus.number_Bus_CS_TIME_CASE(CODE , stoi(TIME), stoi(CASE));
+            return to_string(List_Bus.count_CS_have_CASE);
+        }
+        else return "-1";
+
+    }
+    else {
+        int n = 0;
+        while (instruction[n] != ' ') {
+            n++;
+        }
+        CODE = instruction.substr(0, n);
+
+        instruction = instruction.erase(0, n + 1);
+        TIME = instruction;
+        if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true) {
+            List_Bus.number_Bus_CS_TIME(CODE, stoi(TIME));
+            return to_string(List_Bus.count_CS); 
+        }
+        else return "-1";
+    }
+
+}
+string BusSystem::CE_Bus(string instruction) {
+    string CODE = "";
+    string TIME = "";
+    string CASE = "";
+    if (check_CASE_of_CS_CE_GS_GE(instruction) == true) {
+        int n = 0;
+        while (instruction[n] != ' ') {
+            n++;
+        }
+        CODE = instruction.substr(0, n);
+
+        instruction = instruction.erase(0, n + 1);
+
+        int m = 0;
+        while (instruction[m] != ' ') {
+            m++;
+        }
+        TIME = instruction.substr(0, m);
+
+        instruction = instruction.erase(0, m + 1);
+
+        CASE = instruction;
+        if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true && check_CASE(CASE) == true) {
+            List_Bus.number_Bus_CE_TIME_CASE(CODE, stoi(TIME), stoi(CASE));
+            return to_string(List_Bus.count_CE_have_CASE);
+
+        }
+        else return "-1";
+    }
+    else {
+        int n = 0;
+        while (instruction[n] != ' ') {
+            n++;
+        }
+        CODE = instruction.substr(0, n);
+
+        instruction = instruction.erase(0, n + 1);
+        TIME = instruction;
+        if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true) {
+            List_Bus.number_Bus_CE_TIME(CODE, stoi(TIME));
+            return to_string(List_Bus.count_CE);
+        }
+        else return "-1";
+
+    }
+}
+string BusSystem::GS_Bus(string instruction) {
+    if (check_CASE_of_CS_CE_GS_GE(instruction) == true) {
+    }
+    else {
+
+    }
+
+}
+//string BusSystem::GE_Bus(string instruction) {
+//    if (check_CASE_of_CS_CE_GS_GE(instruction) == true) {}
+//    else {
+//
+//    }
+//
+//}
 
 
 
