@@ -322,9 +322,12 @@ string Double_Link_List_Bus::LP_Bus_GS_TIME_CASE(string CODE , int TIME , int CA
             Bus_Invalid = Bus_cur;
             t_Min = TIME - Bus_cur->TIME_A;
         }
-       
+
+        cout << Bus_Invalid->LP;
     }
-    return Bus_Invalid->LP;
+   
+   
+    cout << Bus_Invalid->LP;
     
   
 }
@@ -339,13 +342,13 @@ string Double_Link_List_Bus::LP_Bus_GS_TIME(string CODE, int TIME) {
         {
             if (t_Min == 0 && Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) {
 
-                t_Min = abs(TIME - Bus_cur->TIME_A);
+                t_Min = TIME - Bus_cur->TIME_A;
                 if (Bus_cur->CASE == 0)  Bus_Invalid_CASE0 = Bus_cur;
                 else Bus_Invalid_CASE1 = Bus_cur;
 
             }
             else {
-                if (abs(TIME - Bus_cur->TIME_A) <= t_Min) {
+                if (TIME - Bus_cur->TIME_A <= t_Min) {
                     if (Bus_cur->CASE == 0)
                     {
                         Bus_Invalid_CASE0 = Bus_cur;
@@ -367,19 +370,19 @@ string Double_Link_List_Bus::LP_Bus_GS_TIME(string CODE, int TIME) {
     {
         if (t_Min == 0 && Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) {
 
-            t_Min = abs(TIME - Bus_cur->TIME_A);
+            t_Min = TIME - Bus_cur->TIME_A;
             if (Bus_cur->CASE == 0)  Bus_Invalid_CASE0 = Bus_cur;
             else Bus_Invalid_CASE1 = Bus_cur;
 
         }
         else {
-            if (abs(TIME - Bus_cur->TIME_A) <= t_Min) {
+            if (TIME - Bus_cur->TIME_A <= t_Min) {
                 if (Bus_cur->CASE == 0)
                 {
                     Bus_Invalid_CASE0 = Bus_cur;
                 }
                 else { Bus_Invalid_CASE1 = Bus_cur; }
-                t_Min = abs(TIME - Bus_cur->TIME_A);
+                t_Min = TIME - Bus_cur->TIME_A;
             }
 
 
@@ -389,12 +392,12 @@ string Double_Link_List_Bus::LP_Bus_GS_TIME(string CODE, int TIME) {
 
 
     // tra ve
-    if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) return "-1";
-    else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL) Bus_Invalid_CASE0->LP;
-    else if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL) Bus_Invalid_CASE1->LP;
+    if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) cout << "-1";
+    else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL) cout << Bus_Invalid_CASE0->LP;
+    else if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL) cout << Bus_Invalid_CASE1->LP;
     else {
-        if ((Bus_Invalid_CASE0->TIME_B - TIME) <= (Bus_Invalid_CASE1->TIME_B - TIME)) { return Bus_Invalid_CASE0->LP; };
-        if ((Bus_Invalid_CASE1->TIME_B - TIME) < (Bus_Invalid_CASE0->TIME_B - TIME)) { return Bus_Invalid_CASE1->LP; }
+        if ((TIME - Bus_cur->TIME_A) <= (TIME - Bus_cur->TIME_A ) ) { cout << Bus_Invalid_CASE0->LP; };
+        if ((TIME - Bus_cur->TIME_A - TIME) < (TIME - Bus_cur->TIME_A )) { cout << Bus_Invalid_CASE1->LP; }
 
 
     }
@@ -1081,6 +1084,7 @@ string BusSystem::CE_Bus(string instruction) {
 
     }
 }
+
 string BusSystem::GS_Bus(string instruction) {
     string CODE = "";
     string TIME = "";
@@ -1105,7 +1109,7 @@ string BusSystem::GS_Bus(string instruction) {
         CASE = instruction;
         if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true && check_CASE(CASE) == true) {
            
-            return List_Bus.LP_Bus_GS_TIME_CASE(CODE, stoi(TIME), stoi(CASE));
+            return  List_Bus.LP_Bus_GS_TIME_CASE(CODE, stoi(TIME), stoi(CASE));
 
         }
         else return "-1";
@@ -1122,7 +1126,7 @@ string BusSystem::GS_Bus(string instruction) {
         instruction = instruction.erase(0, n + 1);
         TIME = instruction;
         if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true) {
-            return List_Bus.LP_Bus_GS_TIME(CODE, stoi(TIME));
+          return List_Bus.LP_Bus_GS_TIME(CODE, stoi(TIME));
         }
         else return "-1";
     }
@@ -1152,7 +1156,7 @@ string BusSystem::GE_Bus(string instruction) {
         CASE = instruction;
         if (check_CODE_Statement(CODE) == true && check_String_to_Int(TIME) == true && check_CASE(CASE) == true) {
 
-            List_Bus.LP_Bus_GE_TIME_CASE(CODE, stoi(TIME), stoi(CASE));
+            return List_Bus.LP_Bus_GE_TIME_CASE(CODE, stoi(TIME), stoi(CASE));
 
         }
         else return "-1";
@@ -1209,11 +1213,12 @@ int main() {
     cout << bs->query("INS 50 50D1-23342 1 1235 5678") << endl;
    
    
-    //cout << bs->query("CE 50 2134") << endl;
+   
 
-    cout << "-----------------------------------------------------" << endl;
+     cout << "-----------------------------------------------------" << endl;
 
-    cout << bs->query("GS 50 1250 1") << endl;
+     cout << bs->query("GS 50 2134 1") << endl;
+     //cout << bs->query("G 50 1250 0") << endl;
     //cout << bs->query("GE 50 10000") << endl;
     
 
