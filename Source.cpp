@@ -11,7 +11,8 @@
 #include<algorithm>
 using namespace std;
 
- int N = 0;   // so chuyen toi da trong 1 tuyen
+ // so chuyen toi da trong 1 tuyen
+int N = 0;
 class Bus {
 private:
     string CODE;
@@ -106,7 +107,7 @@ class BusSystem {
 private:
     friend class Bus;
     friend class Doube_Link_List_Bus;
-
+   
     Double_Link_List_Bus List_Bus; //
 public:
 
@@ -641,7 +642,7 @@ bool BusSystem::check_have_CASE_of_Bus(string instruction)
     }
 
     if (count_space == 4) { return true; }
-    else if (count_space == 3) { return false; } // count_space = 4 , truong hop khac da duoc xu ly trong hamf check chuoi thuc thi
+    else return false;  // count_space = 4 , truong hop khac da duoc xu ly trong hamf check chuoi thuc thi
 }
 
 // check xem case phu hop chua... phu hop khi case chuyen sang int chir co 2 gia tri 0 va 1
@@ -673,6 +674,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space == 1) { return true; }
+        else return false;
     }
     if (ex_statement == "INS") {
         int count_space = 0;
@@ -680,6 +682,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space == 4 || count_space == 5) { return true; }
+        else return false;
     }
     if (ex_statement == "DEL") {
         int count_space = 0;
@@ -687,6 +690,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space <= 3 && count_space >= 1) { return true; }
+        else return false;
     }
     if (ex_statement == "CS ") {
         int count_space = 0;
@@ -694,6 +698,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space >= 2 && count_space <= 3) { return true; }
+        else return false;
     }
     if (ex_statement == "CE ") {
         int count_space = 0;
@@ -701,6 +706,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space >= 2 && count_space <= 3) { return true; }
+        else return false;
     }
     if (ex_statement == "GS ") {
         int count_space = 0;
@@ -708,6 +714,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space >= 2 && count_space <= 3) { return true; }
+        else return false;
     }
     if (ex_statement == "GE ") {
         int count_space = 0;
@@ -715,6 +722,7 @@ bool BusSystem::check_Excution_Statement(string instruction) {
             if (instruction[i] == ' ') { count_space++; }
         }
         if (count_space >= 2 && count_space <= 3) { return true; }
+        else return false;
     }
     else  return false; 
     
@@ -730,7 +738,7 @@ bool BusSystem::check_CODE_LP_Excution_Statement(string codeExcution, string LPE
 //
 bool BusSystem::check_CODE_Statement(string ex_CODE) {
     if (ex_CODE.size() <= 5) { return true; }
-    else  { return false; }
+    else  return false;
 }
 //check xem trong 1 xe bus TIME_B > TIMEA khong ?
 // true : hop le
@@ -835,7 +843,7 @@ string BusSystem::query(string instruction) {
             instruction = instruction.erase(0, 3);
             return GE_Bus(instruction);
         }
-
+        else return "-1";
 
 
     }
@@ -985,23 +993,23 @@ string BusSystem::INS_Bus(string instruction) {
         //cout << new_Bus->CODE << "--" << new_Bus->LP << "---" << new_Bus->CASE << "--" << new_Bus->TIME_A << "--" << new_Bus->TIME_B << endl;
 
 
-        if ((check_CASE(ex_CASE) == true) &&  (check_String_to_Int(ex_TIMEA) == true) && (check_String_to_Int(ex_TIMEB) == true) && (check_TIMEA_TIMEB_of_aBus(ex_TIMEA, ex_TIMEB) == true) && (check_CODE_LP_Excution_Statement(ex_CODE, ex_LP) == true)) {
+        if ((check_CASE(ex_CASE) == true) && (check_String_to_Int(ex_TIMEA) == true) && (check_String_to_Int(ex_TIMEB) == true) && (check_TIMEA_TIMEB_of_aBus(ex_TIMEA, ex_TIMEB) == true) && (check_CODE_LP_Excution_Statement(ex_CODE, ex_LP) == true)) {
 
             new_Bus->CASE = stoi(ex_CASE);
 
             new_Bus->TIME_A = stoi(ex_TIMEA);
             new_Bus->TIME_B = stoi(ex_TIMEB);
-           return this->List_Bus.add(new_Bus);
-           // return to_string(List_Bus.count);
-         
+            return this->List_Bus.add(new_Bus);
+            // return to_string(List_Bus.count);
+
 
         }
 
-        else  return "-1"; 
+        else  return "-1";
     }
 
-    
-    
+
+    else return "-1";
 }
 
 // instruction vao trong cac hamf INS,DEL... la instruction de cho nhung da xoa may ki tu ddau
@@ -1015,14 +1023,14 @@ string BusSystem::DEL_Bus(string instruction) {
     for (unsigned int i = 0; i < instruction.size(); i++) {
         if (instruction[i] == ' ') { count_space++; }
     }
-    if(count_space == 0) {
+    if (count_space == 0) {
         CODE = instruction;
         List_Bus.delete_Bus_CODE(CODE);
         return to_string(List_Bus.count_DEL);
 
     }
-    else if(count_space == 1){
-    
+    else if (count_space == 1) {
+
         int n = 0;
         while (instruction[n] != ' ') {
             n++;
@@ -1037,11 +1045,11 @@ string BusSystem::DEL_Bus(string instruction) {
             List_Bus.delete_Bus_CODE_TIMEA(CODE, stoi(TIMEA));
             return to_string(List_Bus.count_DEL);
         }
-        else  return"-1"; 
+        else  return"-1";
 
-    
+
     }
-    else if(count_space == 2){
+    else if (count_space == 2) {
 
         int n = 0;
         while (instruction[n] != ' ') {
@@ -1051,7 +1059,7 @@ string BusSystem::DEL_Bus(string instruction) {
 
         instruction = instruction.erase(0, n + 1);
 
-        int m= 0;
+        int m = 0;
         while (instruction[m] != ' ') {
             m++;
         }
@@ -1064,12 +1072,12 @@ string BusSystem::DEL_Bus(string instruction) {
         if (check_String_to_Int(TIMEA) == true && check_String_to_Int(TIMEB) && check_CODE_Statement(CODE) == true) {
             List_Bus.delete_Bus_CODE_TIMEA_TIMEB(CODE, stoi(TIMEA), stoi(TIMEB));
 
-           
+
             return to_string(List_Bus.count_DEL);
         }
-        else  return "-1"; 
+        else  return "-1";
     }
-    
+    else return "-1";
 }
 
 string BusSystem::CS_Bus(string instruction) {
@@ -1266,31 +1274,31 @@ string BusSystem::GE_Bus(string instruction) {
 
 
 
-
-int main() {
-    BusSystem* bs = new BusSystem();
-    clock_t start, end;
-    float runTime;
-  
-    cout << bs->query("SQ 050") << endl;
-    cout << "-------------------------------" << endl;
-   
-    
-   /* cout << bs->query("INS 50 50D1-23342 1234 5678") << "\n";
-    cout << bs->query("INS 50 50D1-23342 1234 5679") << "\n";
-    cout << bs->query("INS 50 59A3-18965 1244 1754") << "\n";
-    cout << bs->query("INS 50 54B3-18365 1245 1754") << "\n";
-    cout << bs->query("INS 33 54F1-21076 1 1232 1345") << "\n";
-    cout << bs->query("INS 33 51B5-22451 0 1235 1412") << "\n";
-    cout << bs->query("DEL 50") << "\n";*/
-    cout << bs->query("GS 50 1300 1") << "\n";
-    /*cout << bs->query("CE 33 1400 1") << "\n";
-    cout << bs->query("GS 50 1240 0") << "\n";*/
-   
-
-
-   
-
-    cout << "-------------------------END_TEST_CASE-------------------------------";
-    return 0;
-}
+//
+//int main() {
+//    BusSystem* bs = new BusSystem();
+//    clock_t start, end;
+//    float runTime;
+//  
+//    cout << bs->query("SQ 050") << endl;
+//    cout << "-------------------------------" << endl;
+//   
+//    
+//   /* cout << bs->query("INS 50 50D1-23342 1234 5678") << "\n";
+//    cout << bs->query("INS 50 50D1-23342 1234 5679") << "\n";
+//    cout << bs->query("INS 50 59A3-18965 1244 1754") << "\n";
+//    cout << bs->query("INS 50 54B3-18365 1245 1754") << "\n";
+//    cout << bs->query("INS 33 54F1-21076 1 1232 1345") << "\n";
+//    cout << bs->query("INS 33 51B5-22451 0 1235 1412") << "\n";
+//    cout << bs->query("DEL 50") << "\n";*/
+//    cout << bs->query("GS 50 1300 1") << "\n";
+//    /*cout << bs->query("CE 33 1400 1") << "\n";
+//    cout << bs->query("GS 50 1240 0") << "\n";*/
+//   
+//
+//
+//   
+//
+//    cout << "-------------------------END_TEST_CASE-------------------------------";
+//    return 0;
+//}
