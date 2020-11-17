@@ -149,6 +149,7 @@ bool Double_Link_List_Bus::check_number_Max_of_CODE(Bus* Bus_transmit) {
             if (Bus_cur->CODE == Bus_transmit->CODE) { count_Bus++; }
             Bus_cur = Bus_cur->next;
         }
+        if (Bus_cur->CODE == Bus_transmit->CODE) { count_Bus++; }
     }
     if (count_Bus >= N) return false;
     else return true;
@@ -172,7 +173,7 @@ string Double_Link_List_Bus::add(Bus* Bus_transmit) {
         if (check_CODE_TIMEA(Bus_transmit) == true && check_TIMEA_TIMEB_of_DLL_Bus(Bus_transmit) == true && check_number_Max_of_CODE(Bus_transmit) == true) {
             this->tail->next = Bus_transmit;
             Bus_transmit->prev = tail;
-            /*this->*/tail = Bus_transmit;
+            tail = Bus_transmit;
             this->count++;
 
             return to_string(count);
@@ -193,7 +194,7 @@ void Double_Link_List_Bus::delete_Bus_CODE_TIMEA_TIMEB(string CODE, int TIMEA, i
         if (Bus_cur->CODE == CODE && Bus_cur->TIME_A >= TIMEA && Bus_cur->TIME_A<= TIMEB) delete_a_Bus_of_List_Bus(Bus_cur);
         Bus_cur = Bus_cur->next;
     }
-
+    if (Bus_cur->CODE == CODE && Bus_cur->TIME_A >= TIMEA && Bus_cur->TIME_A <= TIMEB) delete_a_Bus_of_List_Bus(Bus_cur);
 
 }
 void Double_Link_List_Bus::delete_Bus_CODE(string CODE) {
@@ -202,7 +203,7 @@ void Double_Link_List_Bus::delete_Bus_CODE(string CODE) {
         if (Bus_cur->CODE == CODE ) delete_a_Bus_of_List_Bus(Bus_cur);
         Bus_cur = Bus_cur->next;
     }
-
+    if (Bus_cur->CODE == CODE) delete_a_Bus_of_List_Bus(Bus_cur);
 }
 void Double_Link_List_Bus::delete_Bus_CODE_TIMEA(string CODE, int TIMEA) {
     Bus* Bus_cur = this->head;
@@ -210,7 +211,7 @@ void Double_Link_List_Bus::delete_Bus_CODE_TIMEA(string CODE, int TIMEA) {
         if (Bus_cur->CODE == CODE && Bus_cur->TIME_A == TIMEA) delete_a_Bus_of_List_Bus(Bus_cur);
         Bus_cur = Bus_cur->next;
     }
-
+    if (Bus_cur->CODE == CODE && Bus_cur->TIME_A == TIMEA) delete_a_Bus_of_List_Bus(Bus_cur);
 
 }
 void Double_Link_List_Bus::delete_a_Bus_of_List_Bus(Bus* Bus_transmit) {
@@ -550,6 +551,7 @@ bool Double_Link_List_Bus::check_CODE_TIMEA(Bus* Bus_transmit)   // true neu ko 
 
             Bus_cur = Bus_cur->next;
         }
+        if (Bus_cur->CODE == Bus_transmit->CODE && Bus_cur->TIME_A == Bus_transmit->TIME_A && Bus_cur->CASE == Bus_transmit->CASE)  n += 1;
     }
    // cout << Bus_transmit->CODE << "..." << Bus_transmit->LP << "..." << Bus_transmit->CASE << "..." << Bus_transmit->TIME_A << "..." << Bus_transmit->TIME_B << "..." << endl;
     //cout << "...." << n << endl;
@@ -566,32 +568,32 @@ bool Double_Link_List_Bus::check_TIMEA_TIMEB_of_DLL_Bus(Bus* Bus_transmit)
     Bus* Bus_cur = this->head;
     int n = 0;
     
-    if (this->count == 1 && head->LP == Bus_transmit->LP && head->TIME_B >= Bus_transmit->TIME_A) { n++; }
-    if (this->count == 2 && head->next->LP == Bus_transmit->LP && head->next->TIME_B >= Bus_transmit->TIME_A) { n++; }
-
-    while (Bus_cur->next != NULL) {
-        if (Bus_cur->LP == Bus_transmit->LP) {
-            if (Bus_cur->TIME_B >= Bus_transmit->TIME_A) { n++; }
+    if (this->count == 1 && head->LP == Bus_transmit->LP && (head->TIME_B < Bus_transmit->TIME_A ) ){ n = n; }
+    
+    if (this->count == 1 && head->LP == Bus_transmit->LP &&  (head->TIME_A > Bus_transmit->TIME_B)) { n =  n; }
+    //if (this->count == 2 && head->next->LP == Bus_transmit->LP && (head->next->TIME_B >= Bus_transmit->TIME_A ||head->next->TIME_A <= Bus_transmit->TIME_B)) { n++; }
+    else {
+        while (Bus_cur->next != NULL) {
+            if (Bus_cur->LP == Bus_transmit->LP) {
+                if (Bus_cur->TIME_B < Bus_transmit->TIME_A || Bus_cur->TIME_A > Bus_transmit->TIME_B) { n = n; }
+                else n++;
+            }
+            else n++;
+            Bus_cur = Bus_cur->next;
         }
-        Bus_cur = Bus_cur->next;
+        if (Bus_cur->LP == Bus_transmit->LP) {
+            if (Bus_cur->TIME_B < Bus_transmit->TIME_A || Bus_cur->TIME_A > Bus_transmit->TIME_B) { n = n; }
+            else n++;
+        }
+        else n++;
     }
-    if (n > 0) return false;
-    else return true;
+
+   
+    if (n > 0) {  return false; }
+    else { return true; }
 }
 
-// .. dung de dem so Bus trong 1 tuyen CODE
-//.. chua dung den .. neu yeu cau tra ve so chuyen trong 1 tuyen
-int Double_Link_List_Bus::number_Bus_CODE(Bus* Bus_transmit) {
-    Bus* Bus_cur = this->head;
-    int number_Bus_CODE = 0;     // so chuyen tren mot tuyen 
-    while (Bus_cur->next != NULL) {
-        if (Bus_cur->CODE == Bus_transmit->CODE) { number_Bus_CODE++; }
-        Bus_cur = Bus_cur->next;
 
-    }
-    return number_Bus_CODE;
-
-}
 
 // kiem tra trong chuoi co ton tai CASE hay khong ? chua xet den truong hop case do co hop le ?
 // tra ve true neu co CASE ( co 5 space )
@@ -1235,71 +1237,34 @@ string BusSystem::GE_Bus(string instruction) {
 
 
 
-//
-//int main() {
-//    BusSystem* bs = new BusSystem();
-//    cout << bs->query("SQ 050") << endl;
-//    cout << "-------------------------------" << endl;
-//    
-//    // check co tuyen cung chuyen cung gio xuat phat cung chieu khac gio xuat phat 
-//
-//    //cout << bs->query("INS 43A 51D6-8919 0 800 1100") << endl;
-//    //
-//
-//    //cout << bs->query("INS A12B 5D23342 1235 5678") << endl;
-//    //cout << bs->query("INS B23A 31RE-555 0 1235 9121") << endl;
-//    //cout << bs->query("INS C400 54D143-111 0 12778 21001") << endl;
-//    // cout << bs->query("INS D33 14C2-738 121 912") << endl;
-//    //cout << bs->query("INS A12B 51D23244 1 1235 5655") << endl;
-//    //cout << bs->query("INS B23A 32C-66563 657 9121") << endl;
-//    //cout << bs->query("INS D43 AD-738 5699 9121") << endl;
-//    //cout << bs->query("INS 43A 51D6-89191 1 277 1100") << endl;
-//
-//    
-//    cout << bs->query("SQ 500") << endl;
-//    cout << bs->query("INS 50 32C1-55555 0 1299 9121") << endl;
-//    cout << bs->query("INS 50 44C2-73847 1 1299 9121") << endl;
-//    cout << bs->query("INS 50 54D1-89391 0 1277 2100") << endl;
-//   
-//    
-//    
-//    cout << bs->query("INS 50 50D1-23342 1 1238 5678") << endl;
-//    
-//     cout << "-----------------------------------------------------" << endl;
-//
-//     
-//     //cout << bs->query("GS 50 1250 0") << endl;
-//    cout << bs->query("GE 50 9121 1") << endl;
-//    
-//
-//    
-//   
-//    
-//
-//  
-//
-//    ////cout << bs->query("CS 43A 1100") << endl; 
-//    //cout << bs->query("CE 43A 1101") << endl;
-//
-//    ////cout << bs->query("DEL 43A") << endl; 
-//
-//
-//  
-//    // check xe bus nhung ma time den ben nho hon time den ddi
-//
-//    /*cout << bs->query("INS 50 51D1-12345 1 1234 5555") << endl;
-//    cout << bs->query("INS 50 51D1-54321 0 1234 3333") << endl;*/
-//
-//    //
-//
-//
-//
-//
-// 
-//
-//
-//   
-//
-//    cout << "-------------------------END_TEST_CASE-------------------------------";
-//    return 0;
-//}
+
+int main() {
+    BusSystem* bs = new BusSystem();
+    cout << bs->query("SQ 050") << endl;
+    cout << "-------------------------------" << endl;
+    /*cout << bs->query("INS 43A 51D6-89192 1 1200 1300") << endl;
+    cout << bs->query("INS A12B 5D23342 1235 5678") << endl;
+    cout << bs->query("INS B23A 31RE-555 0 1235 9121") << endl;
+    cout << bs->query("INS C400 54D143-111 0 12778 21001") << endl;
+     cout << bs->query("INS D33 14C2-738 121 912") << endl;
+    cout << bs->query("INS A12B 51D23244 1 1235 5655") << endl;
+    cout << bs->query("INS B23A 32C-66563 657 9121") << endl;
+    cout << bs->query("INS D43 AD-738 5699 9121") << endl;
+    cout << bs->query("INS 43A 51D6-89191 1 277 1100") << endl;*/
+    // check co tuyen cung chuyen cung gio xuat phat cung chieu khac gio xuat phat 
+
+    //cout << bs->query("INS 43A 51D6-8919 0 800 1100") << endl;
+    //
+    //cout << bs->query("DEL 43A") << endl;
+
+    cout << bs->query("INS 50 50D-1234 123 456") << endl;
+    cout << bs->query("INS 50 50D-1234 001 122") << endl;
+
+ 
+
+
+   
+
+    cout << "-------------------------END_TEST_CASE-------------------------------";
+    return 0;
+}
