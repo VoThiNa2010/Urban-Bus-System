@@ -11,7 +11,7 @@
 #include<algorithm>
 using namespace std;
 
-int N;   // so chuyen toi da trong 1 tuyen
+ int N = 0;   // so chuyen toi da trong 1 tuyen
 class Bus {
 private:
     string CODE;
@@ -494,9 +494,30 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME(string CODE, int TIME) {
         }
         else  Bus_cur = Bus_cur->next;
     }
+    //
+    if (Bus_cur->CODE == CODE && Bus_cur->TIME_B > TIME)
+    {
+        if (t_Min == 0) {
+            t_Min = TIME - Bus_cur->TIME_B;
+            if (Bus_cur->CASE == 0)  Bus_Invalid_CASE0 = Bus_cur;
+            else Bus_Invalid_CASE1 = Bus_cur;
+
+        }
+        else {
+            if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                if (Bus_cur->CASE == 0)
+                {
+                    Bus_Invalid_CASE0 = Bus_cur;
+                }
+                else { Bus_Invalid_CASE1 = Bus_cur; }
+                t_Min = TIME - Bus_cur->TIME_B;
+            }
 
 
+        }
 
+    }
+    //
     if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) return "-1";
     else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL) { Bus_return = Bus_Invalid_CASE0; }
     else if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL) { Bus_return = Bus_Invalid_CASE1; }
@@ -1214,71 +1235,71 @@ string BusSystem::GE_Bus(string instruction) {
 
 
 
-
-int main() {
-    BusSystem* bs = new BusSystem();
-    cout << bs->query("SQ 050") << endl;
-    cout << "-------------------------------" << endl;
-    
-    // check co tuyen cung chuyen cung gio xuat phat cung chieu khac gio xuat phat 
-
-    //cout << bs->query("INS 43A 51D6-8919 0 800 1100") << endl;
-    //
-
-    //cout << bs->query("INS A12B 5D23342 1235 5678") << endl;
-    //cout << bs->query("INS B23A 31RE-555 0 1235 9121") << endl;
-    //cout << bs->query("INS C400 54D143-111 0 12778 21001") << endl;
-    // cout << bs->query("INS D33 14C2-738 121 912") << endl;
-    //cout << bs->query("INS A12B 51D23244 1 1235 5655") << endl;
-    //cout << bs->query("INS B23A 32C-66563 657 9121") << endl;
-    //cout << bs->query("INS D43 AD-738 5699 9121") << endl;
-    //cout << bs->query("INS 43A 51D6-89191 1 277 1100") << endl;
-
-    
-    cout << bs->query("SQ 500") << endl;
-    cout << bs->query("INS 50 32C1-55555 0 1235 9121") << endl;
-    cout << bs->query("INS 50 44C2-73847 1 1299 9121") << endl;
-    cout << bs->query("INS 50 54D1-89391 0 1277 2100") << endl;
-   
-    
-    
-    cout << bs->query("INS 50 50D1-23342 1 1238 5678") << endl;
-    
-     cout << "-----------------------------------------------------" << endl;
-
-     
-     //cout << bs->query("GS 50 1250 0") << endl;
-    cout << bs->query("GS 50 1300") << endl;
-    
-
-    
-   
-    
-
-  
-
-    ////cout << bs->query("CS 43A 1100") << endl; 
-    //cout << bs->query("CE 43A 1101") << endl;
-
-    ////cout << bs->query("DEL 43A") << endl; 
-
-
-  
-    // check xe bus nhung ma time den ben nho hon time den ddi
-
-    /*cout << bs->query("INS 50 51D1-12345 1 1234 5555") << endl;
-    cout << bs->query("INS 50 51D1-54321 0 1234 3333") << endl;*/
-
-    //
-
-
-
-
- 
-
-
-   
-
-    cout << "-------------------------END_TEST_CASE-------------------------------";
-    return 0;
-}
+//
+//int main() {
+//    BusSystem* bs = new BusSystem();
+//    cout << bs->query("SQ 050") << endl;
+//    cout << "-------------------------------" << endl;
+//    
+//    // check co tuyen cung chuyen cung gio xuat phat cung chieu khac gio xuat phat 
+//
+//    //cout << bs->query("INS 43A 51D6-8919 0 800 1100") << endl;
+//    //
+//
+//    //cout << bs->query("INS A12B 5D23342 1235 5678") << endl;
+//    //cout << bs->query("INS B23A 31RE-555 0 1235 9121") << endl;
+//    //cout << bs->query("INS C400 54D143-111 0 12778 21001") << endl;
+//    // cout << bs->query("INS D33 14C2-738 121 912") << endl;
+//    //cout << bs->query("INS A12B 51D23244 1 1235 5655") << endl;
+//    //cout << bs->query("INS B23A 32C-66563 657 9121") << endl;
+//    //cout << bs->query("INS D43 AD-738 5699 9121") << endl;
+//    //cout << bs->query("INS 43A 51D6-89191 1 277 1100") << endl;
+//
+//    
+//    cout << bs->query("SQ 500") << endl;
+//    cout << bs->query("INS 50 32C1-55555 0 1299 9121") << endl;
+//    cout << bs->query("INS 50 44C2-73847 1 1299 9121") << endl;
+//    cout << bs->query("INS 50 54D1-89391 0 1277 2100") << endl;
+//   
+//    
+//    
+//    cout << bs->query("INS 50 50D1-23342 1 1238 5678") << endl;
+//    
+//     cout << "-----------------------------------------------------" << endl;
+//
+//     
+//     //cout << bs->query("GS 50 1250 0") << endl;
+//    cout << bs->query("GE 50 9121 1") << endl;
+//    
+//
+//    
+//   
+//    
+//
+//  
+//
+//    ////cout << bs->query("CS 43A 1100") << endl; 
+//    //cout << bs->query("CE 43A 1101") << endl;
+//
+//    ////cout << bs->query("DEL 43A") << endl; 
+//
+//
+//  
+//    // check xe bus nhung ma time den ben nho hon time den ddi
+//
+//    /*cout << bs->query("INS 50 51D1-12345 1 1234 5555") << endl;
+//    cout << bs->query("INS 50 51D1-54321 0 1234 3333") << endl;*/
+//
+//    //
+//
+//
+//
+//
+// 
+//
+//
+//   
+//
+//    cout << "-------------------------END_TEST_CASE-------------------------------";
+//    return 0;
+//}
