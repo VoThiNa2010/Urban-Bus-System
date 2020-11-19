@@ -50,14 +50,29 @@ public:
         this->next = next;
         this->prev = prev;
     }
+    bool operator==(Bus bus)
+    {
+        if (this->CODE == bus.CODE && this->LP == bus.LP && this->CASE == bus.CASE && this->TIME_A == bus.TIME_A && this->TIME_B == bus.TIME_B)return 1;
+       else return 0;
+    }
 
 };
 class Double_Link_List_Bus
 {
-//private:
-public:
+private:
+
     friend class Bus;
     friend class BusSystem;
+
+public:
+   // Double_Link_List_Bus() {
+   //     this->head = NULL;
+   //     this->tail = NULL;
+   //     //int count;
+   //     //Bus* next;
+   //     //Bus* prev;
+   // }
+   //// ~Doube_Link_List_Bus() {};
 protected:
     Bus* head;
     Bus* tail;
@@ -105,8 +120,8 @@ public:
 
 };
 class BusSystem {
-//private:
-public:
+private:
+
     friend class Bus;
     friend class Doube_Link_List_Bus;
 
@@ -487,17 +502,19 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME_CASE(string CODE, int TIME, int CASE
     else {
         Bus* Bus_cur = this->head;
         int t_Min = 0;
-        Bus* Bus_Invalid = new Bus();
+        Bus* Bus_Invalid =  NULL;
         int n = 0;
 
         while (Bus_cur->next != NULL) {
-            if (t_Min == 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE) {
+            
+            if (t_Min == 0 && Bus_Invalid == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE) {
                 Bus_Invalid = Bus_cur;
                 t_Min = TIME - Bus_cur->TIME_B;
                 n++;
+                
             }
             
-            if (t_Min != 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE)
+            else if (/*t_Min != 0 &&*/ Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE)
             {
                     if ((TIME - Bus_cur->TIME_B) < t_Min) {
                         Bus_Invalid = Bus_cur;
@@ -505,7 +522,7 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME_CASE(string CODE, int TIME, int CASE
                         n++;
                     }
                     if ((TIME - Bus_cur->TIME_B) == t_Min) {
-                        if (Bus_cur->TIME_A < Bus_Invalid->TIME_A) {
+                        if (Bus_cur->TIME_A > Bus_Invalid->TIME_A) {
                             Bus_Invalid = Bus_cur;
                             n++;
                         }
@@ -519,28 +536,30 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME_CASE(string CODE, int TIME, int CASE
 
         //check tail
         //if (Bus_cur->CODE == CODE && Bus_cur->TIME_B >= TIME && Bus_cur->CASE == CASE) return "-1";
-        if (t_Min != 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE)
-        {      
-           
-                if ((TIME - Bus_cur->TIME_B) < t_Min) {
-                    Bus_Invalid = Bus_cur;
-                    t_Min = TIME - Bus_cur->TIME_B;
-                    n++;
-                }
-                if ((TIME - Bus_cur->TIME_B) == t_Min) {
-                    if (Bus_cur->TIME_A < Bus_Invalid->TIME_A) {
-                        Bus_Invalid = Bus_cur;
-                        n++;
-                    }
-
-                }
-
-
-            }
-        if (t_Min == 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE) {
+        
+        if (t_Min == 0 && Bus_Invalid == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE) {
             Bus_Invalid = Bus_cur;
             t_Min = TIME - Bus_cur->TIME_B;
             n++;
+           
+        }
+        else if (/*t_Min != 0 && */Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME && Bus_cur->CASE == CASE)
+        {
+
+            if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                Bus_Invalid = Bus_cur;
+                t_Min = TIME - Bus_cur->TIME_B;
+                n++;
+            }
+            if ((TIME - Bus_cur->TIME_B) == t_Min) {
+                if (Bus_cur->TIME_A >  Bus_Invalid->TIME_A) {
+                    Bus_Invalid = Bus_cur;
+                    n++;
+                }
+
+            }
+
+
         }
         if (n == 0) return "-1";
 
@@ -554,13 +573,13 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME(string CODE, int TIME) {
 
         Bus* Bus_cur = this->head;
         int t_Min = 0;
-        Bus* Bus_Invalid_CASE0 = new Bus();
-        Bus* Bus_Invalid_CASE1 = new Bus();
+        Bus* Bus_Invalid_CASE0 = NULL;
+        Bus* Bus_Invalid_CASE1 = NULL;
         Bus* Bus_return = new Bus();
         int n = 0;
-        
+
         while (Bus_cur->next != NULL) {
-            if (t_Min != 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
+            if (t_Min == 0 && Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
 
                 t_Min = TIME - Bus_cur->TIME_B;
                 if (Bus_cur->CASE == 0)
@@ -571,43 +590,8 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME(string CODE, int TIME) {
                 n++;
 
             }
-            if (t_Min != 0 && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME)
-            {
-                
-                    if ((TIME - Bus_cur->TIME_B) < t_Min) {
-                        if (Bus_cur->CASE == 0)
-                        {
-                            Bus_Invalid_CASE0 = Bus_cur;
-                        }
-                        else { Bus_Invalid_CASE1 = Bus_cur; }
-                        t_Min = TIME - Bus_cur->TIME_B;
-                        n++;
-                    }
-                    if ((TIME - Bus_cur->TIME_B) == t_Min) {
 
-                      //  if (Bus_cur->CASE )
-
-
-                       /* if (Bus_cur->CASE == 0)
-                        {
-                            Bus_Invalid_CASE0 = Bus_cur;
-                        }
-                        else { Bus_Invalid_CASE1 = Bus_cur; }
-                        t_Min = TIME - Bus_cur->TIME_B;*/
-                        n++;
-                    }
-
-
-                }
-
-              
-            
-            Bus_cur = Bus_cur->next;
-        }
-        //
-        if (Bus_cur->CODE == CODE && Bus_cur->TIME_B >= TIME) return "-1";
-        if (Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME)
-        {
+            if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
                 if ((TIME - Bus_cur->TIME_B) < t_Min) {
                     if (Bus_cur->CASE == 0)
                     {
@@ -617,26 +601,227 @@ string Double_Link_List_Bus::LP_Bus_GE_TIME(string CODE, int TIME) {
                     t_Min = TIME - Bus_cur->TIME_B;
                     n++;
                 }
+                else if ((TIME - Bus_cur->TIME_B) == t_Min) {
+                    if (TIME - Bus_Invalid_CASE0->TIME_B == t_Min) {
+                        if (Bus_cur->CASE == 0) {
+                            if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                                Bus_Invalid_CASE0 = Bus_cur;
+                            }
+                        }
+                        else if (Bus_cur->CASE == 1) {
+                            Bus_Invalid_CASE1 = Bus_cur;
+                        }
+
+
+                    }
+
+                }
+
+            }
+            if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
+                if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                    if (Bus_cur->CASE == 0)
+                    {
+                        Bus_Invalid_CASE0 = Bus_cur;
+                    }
+                    else { Bus_Invalid_CASE1 = Bus_cur; }
+                    t_Min = TIME - Bus_cur->TIME_B;
+                    n++;
+                }
+                else if ((TIME - Bus_cur->TIME_B) == t_Min) {
+
+                    if (Bus_cur->CASE == 0) {
+                        Bus_Invalid_CASE0 = Bus_cur;
+                    }
+                    else if (Bus_cur->CASE == 1) {
+                        if (Bus_cur->TIME_A > Bus_Invalid_CASE1->TIME_A) {
+                            Bus_Invalid_CASE1 = Bus_cur;
+                        }
+
+                    }
+
+
+                }
+            }
+
+            else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 != NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME)
+            {
+
+                if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                    if (Bus_cur->CASE == 0)
+                    {
+                        Bus_Invalid_CASE0 = Bus_cur;
+                    }
+                    else { Bus_Invalid_CASE1 = Bus_cur; }
+
+                    n++;
+                }
+                if ((TIME - Bus_cur->TIME_B) == t_Min) {
+                    if (TIME - Bus_Invalid_CASE0->TIME_B < TIME - Bus_Invalid_CASE1->TIME_B) {
+                        if (Bus_cur->CASE == 0) {
+                            if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                                Bus_Invalid_CASE0 = Bus_cur;
+                            }
+                        }
+                        else if (Bus_cur->CASE == 1) {
+                            Bus_Invalid_CASE1 = Bus_cur;
+                        }
+
+
+                    }
+                    else if (TIME - Bus_Invalid_CASE1->TIME_B < TIME - Bus_Invalid_CASE0->TIME_A)
+                    {
+                        if (Bus_cur->CASE == 0) {
+                            Bus_Invalid_CASE0 = Bus_cur;
+                        }
+                        else if (Bus_cur->CASE == 1) {
+                            if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                                Bus_Invalid_CASE1 = Bus_cur;
+                            }
+
+                        }
+
+
+                    }
+                    n++;
+                }
 
 
             }
 
-       // }
-        //
-        if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) return "-1";
-        else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL) { Bus_return = Bus_Invalid_CASE0; }
-        else if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL) { Bus_return = Bus_Invalid_CASE1; }
-        else {
-            if ((Bus_Invalid_CASE0->TIME_B - TIME) <= (Bus_Invalid_CASE1->TIME_B - TIME)) { Bus_return = Bus_Invalid_CASE0; };
-            if ((Bus_Invalid_CASE1->TIME_B - TIME) < (Bus_Invalid_CASE0->TIME_B - TIME)) { Bus_return = Bus_Invalid_CASE1; }
 
+
+            Bus_cur = Bus_cur->next;
+        }
+        // check Bus cuoi cung
+        if (t_Min == 0 && Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
+
+            t_Min = TIME - Bus_cur->TIME_B;
+            if (Bus_cur->CASE == 0)
+            {
+                Bus_Invalid_CASE0 = Bus_cur;
+            }
+            else { Bus_Invalid_CASE1 = Bus_cur; }
+            n++;
 
         }
-        if (n == 0) return "-1";
-        else  return Bus_return->LP;
-    }
 
-}
+        if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
+            if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                if (Bus_cur->CASE == 0)
+                {
+                    Bus_Invalid_CASE0 = Bus_cur;
+                }
+                else { Bus_Invalid_CASE1 = Bus_cur; }
+                t_Min = TIME - Bus_cur->TIME_B;
+                n++;
+            }
+            else if ((TIME - Bus_cur->TIME_B) == t_Min) {
+                if (TIME - Bus_Invalid_CASE0->TIME_B == t_Min) {
+                    if (Bus_cur->CASE == 0) {
+                        if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                            Bus_Invalid_CASE0 = Bus_cur;
+                        }
+                    }
+                    else if (Bus_cur->CASE == 1) {
+                        Bus_Invalid_CASE1 = Bus_cur;
+                    }
+
+
+                }
+
+            }
+
+        }
+        if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME) {
+            if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                if (Bus_cur->CASE == 0)
+                {
+                    Bus_Invalid_CASE0 = Bus_cur;
+                }
+                else { Bus_Invalid_CASE1 = Bus_cur; }
+                t_Min = TIME - Bus_cur->TIME_B;
+                n++;
+            }
+            else if ((TIME - Bus_cur->TIME_B) == t_Min) {
+
+                if (Bus_cur->CASE == 0) {
+                    Bus_Invalid_CASE0 = Bus_cur;
+                }
+                else if (Bus_cur->CASE == 1) {
+                    if (Bus_cur->TIME_A > Bus_Invalid_CASE1->TIME_A) {
+                        Bus_Invalid_CASE1 = Bus_cur;
+                    }
+
+                }
+
+
+            }
+        }
+
+        if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 != NULL && Bus_cur->CODE == CODE && Bus_cur->TIME_B < TIME)
+        {
+
+            if ((TIME - Bus_cur->TIME_B) < t_Min) {
+                if (Bus_cur->CASE == 0)
+                {
+                    Bus_Invalid_CASE0 = Bus_cur;
+                }
+                else { Bus_Invalid_CASE1 = Bus_cur; }
+
+                n++;
+            }
+            if ((TIME - Bus_cur->TIME_B) == t_Min) {
+                if (TIME - Bus_Invalid_CASE0->TIME_B < TIME - Bus_Invalid_CASE1->TIME_B) {
+                    if (Bus_cur->CASE == 0) {
+                        if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                            Bus_Invalid_CASE0 = Bus_cur;
+                        }
+                    }
+                    else if (Bus_cur->CASE == 1) {
+                        Bus_Invalid_CASE1 = Bus_cur;
+                    }
+
+
+                }
+                else if (TIME - Bus_Invalid_CASE1->TIME_B < TIME - Bus_Invalid_CASE0->TIME_A)
+                {
+                    if (Bus_cur->CASE == 0) {
+                        Bus_Invalid_CASE0 = Bus_cur;
+                    }
+                    else if (Bus_cur->CASE == 1) {
+                        if (Bus_cur->TIME_A > Bus_Invalid_CASE0->TIME_A) {
+                            Bus_Invalid_CASE1 = Bus_cur;
+                        }
+
+                    }
+
+
+                }
+               // else {}
+                n++;
+            }
+        }
+    
+
+     // in ra
+            if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 == NULL) return "-1";
+            else if (Bus_Invalid_CASE0 != NULL && Bus_Invalid_CASE1 == NULL) { Bus_return = Bus_Invalid_CASE0; }
+            else if (Bus_Invalid_CASE0 == NULL && Bus_Invalid_CASE1 != NULL) { Bus_return = Bus_Invalid_CASE1; }
+            else {
+                if ((Bus_Invalid_CASE0->TIME_B - TIME) <= (Bus_Invalid_CASE1->TIME_B - TIME)) { Bus_return = Bus_Invalid_CASE0; };
+                if ((Bus_Invalid_CASE1->TIME_B - TIME) < (Bus_Invalid_CASE0->TIME_B - TIME)) { Bus_return = Bus_Invalid_CASE1; }
+
+
+            }
+            if (n == 0) return "-1";
+            else  return Bus_return->LP;
+        }
+
+    }
+    
+
+
 // kiem tra xem da co bus nao cung tuyen , cung time a khong ?
 // true neu khong co 
 // false neu co
@@ -977,7 +1162,7 @@ string BusSystem::INS_Bus(string instruction) {
             new_Bus->TIME_A = stoi(ex_TIMEA);
             new_Bus->TIME_B = stoi(ex_TIMEB);
             return this->List_Bus.add(new_Bus);
-            //return to_string(List_Bus.count);
+          
 
         }
 
@@ -1320,26 +1505,11 @@ string BusSystem::GE_Bus(string instruction) {
 
 int main() {
     BusSystem* bs = new BusSystem();
-    cout << bs->query("SQ 500") << endl;
-    cout << bs->query("INS 50 50D1-23341 6 12") << endl;  //1
-    cout << bs->query("INS 50 50D1-23342 5 11") << endl;  //2
-    cout << bs->query("INS 50 50D1-23341 13 14") << endl;  //3
-    cout << bs->query("INS 50 50D1-23342 12 13") << endl;   //4
-    cout << "......." << endl;
-    //
-    cout << bs->query("INS 51 50D1-23341 6 12") << endl;  //1
-    cout << bs->query("INS 51 50D1-23342 5 11") << endl;  //2
-    cout << bs->query("INS 51 50D1-23341 13 14") << endl;  //3
-    cout << bs->query("INS 51 50D1-23342 12 13") << endl;  //4
-    cout << "....." << endl;
-    cout << bs->query("DEL 50 4") << endl;  //0
-    cout << bs->query("DEL 50 5 11") << endl; // 2
-    cout << bs->query("DEL 50 3 5") << endl; // 0 vi no bi xoa may bus o lenh tren
-
-    cout << bs->query("DEL 51") << endl;  //4
-    cout << bs->query("DEL 51") << endl;   //0
-
-    cout << bs->query("DEL 52") << endl;  //0
+    cout << bs->query("SQ 3") << endl;
+    cout << bs->query("INS 50 50D1-23341 1 5 10") << endl;
+    cout << bs->query("INS 50 50D1-23342 1 8 9") << endl;
+    cout << bs->query("INS 50 50D1-23342 1 20 22") << endl;
+    cout << bs->query("INS 50 50D1-23342 1 29 40") << endl;
 
     
 }
