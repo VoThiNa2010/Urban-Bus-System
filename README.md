@@ -1,11 +1,14 @@
-VIETNAM NATIONAL UNIVERSITY - HO CHI MINH CITY
-HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY
-FACULTY OF COMPUTER SCIENCE AND ENGINEERING
+#VIETNAM NATIONAL UNIVERSITY - HO CHI MINH CITY
+#HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY
+#FACULTY OF COMPUTER SCIENCE AND ENGINEERING
 
 ----------------------------------------------------------------------------
+'''
 ASSIGNMENT1-Phase2
-
+'''
+'''
 URBAN BUS SYSTEM
+'''
 -----------------------------------------------------------------------------
 1 Outcome
 After successfully completing this assignment, students will be able to:
